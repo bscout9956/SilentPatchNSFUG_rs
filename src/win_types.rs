@@ -3,3 +3,6 @@
 
 pub type DWORD = u32;
 pub type WORD = u16;
+pub type LCID = DWORD;
+pub type LPCSTR = *const i8;
+pub type LPSTR = *mut i8;
