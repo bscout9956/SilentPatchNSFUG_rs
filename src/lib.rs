@@ -5,6 +5,7 @@
 use windows_sys::Win32::{Foundation::HMODULE, System::LibraryLoader::GetModuleHandleA};
 mod FixedDateFormat;
 mod FixedDriftScore;
+mod Patterns;
 mod ScopedUnprotect;
 mod macros;
 mod win_types;
