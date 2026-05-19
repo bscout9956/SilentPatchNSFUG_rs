@@ -48,7 +48,6 @@ pub unsafe extern "cdecl" fn GetTotalLapScore_Hook() -> f32 {
 }
 
 // Will I need the type?
-type orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore = fn();
 static mut orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore: *const () = std::ptr::null();
 
 #[unsafe(no_mangle)]
