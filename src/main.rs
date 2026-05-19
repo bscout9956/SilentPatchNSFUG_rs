@@ -1,13 +1,4 @@
-
 use std::{arch::naked_asm, mem};
-#[allow(non_snake_case)]
-#[repr(C)]
-struct RacingCar {
-    // Not using char for field_0 as char in Rust is Unicode (4 bytes)
-    pub field_0: [u8; 224],
-    pub m_lapScores: [f32; 11],
-    pub gap10C: [u8; 52],
-}
 
 // Original comment by Silent:
 // UG's binary was not compiled with the Watcom compiler, but it seems to use very aggressive optimizations.
@@ -42,6 +33,15 @@ macro_rules! NAKED_FUNC_EPILOG {
          pop ebp\n\
          ret\n"
     };
+}
+
+#[allow(non_snake_case)]
+#[repr(C)]
+struct RacingCar {
+    // Not using char for field_0 as char in Rust is Unicode (4 bytes)
+    pub field_0: [u8; 224],
+    pub m_lapScores: [f32; 11],
+    pub gap10C: [u8; 52],
 }
 
 #[allow(non_snake_case)]
