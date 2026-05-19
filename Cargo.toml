@@ -9,7 +9,7 @@ non_camel_case_types = "allow"
 non_upper_case_globals = "allow"
 
 [dependencies]
-windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_System_Memory", "Win32_Globalization"] }
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_System_Memory", "Win32_Globalization", "Win32_System_SystemInformation"] }
 
 [lib]
 crate-type = ["cdylib"]
