@@ -4,6 +4,7 @@
 mod FixedDriftScore;
 mod FixedDateFormat;
 mod macros;
+mod win_types;
 
 fn main() {
     println!("Hello, world!");
