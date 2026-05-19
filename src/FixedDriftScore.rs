@@ -56,7 +56,8 @@ static mut orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore: *const () 
 pub unsafe extern "cdecl" fn CheckForMagazineTaskCompletion_BeatingPresetDriftScore_Hook() {
     naked_asm!(
         // Original comment: Convert the value in eax from float to int
-        "movss xmm0, eax",
+        // movss prevents this from compiling, I'm not sure what to do, even the LLM says movd is the correct choice lol
+        "movd xmm0, eax",
         "cvttss2si eax, xmm0",
         "jmp dword ptr [{x}]",
         x = sym orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore,
