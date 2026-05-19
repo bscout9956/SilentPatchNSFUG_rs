@@ -1,3 +1,4 @@
+
 use std::{arch::naked_asm, mem};
 #[allow(non_snake_case)]
 #[repr(C)]
@@ -43,6 +44,7 @@ macro_rules! NAKED_FUNC_EPILOG {
     };
 }
 
+#[allow(non_snake_case)]
 impl RacingCar {
     // We only define this, this isn't meant to be called. It's a compile time check.
     fn _assert_size() {
