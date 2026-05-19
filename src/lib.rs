@@ -20,5 +20,6 @@ pub extern "C" fn OnInitializeHook() {
         // Original comment:
         // Fix the drift score magazine taking a best lap score and dividing it by laps.
         // Also fix the high score in the menu displaying style points instead of the full score.
+        // let getBestLapScore = pattern("E8 ? ? ? ? E8 ? ? ? ? 89 86").get_one();
     }
 }
