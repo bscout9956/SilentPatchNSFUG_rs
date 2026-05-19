@@ -57,12 +57,8 @@ impl RacingCar {
         for lap_score in self.m_lapScores {
             total_score += lap_score;
         }
-
         total_score
     }
-
-
-
 }
 
 #[unsafe(no_mangle)]
