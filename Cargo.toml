@@ -16,8 +16,13 @@ windows-sys = { version = "0.61.2", features = [
     "Win32_System_SystemInformation",
     "Win32_System_LibraryLoader",
     "Win32_System_Diagnostics_Debug",
-    "Win32_System_SystemServices"
+    "Win32_System_SystemServices",
 ] }
 
 [lib]
 crate-type = ["cdylib"]
+
+[features]
+default = ["patterns_use_hints", "patterns_can_serialize_hints"]
+patterns_use_hints = []
+patterns_can_serialize_hints = []
