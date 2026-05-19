@@ -13,7 +13,12 @@ struct RacingCar {
 impl RacingCar {
     // We only define this, this isn't meant to be called. It's a compile time check.
     fn _assert_size() {
-        const {assert!(mem::size_of::<RacingCar>() == 0x140, "Wrong size: RacingCar")};
+        const {
+            assert!(
+                mem::size_of::<RacingCar>() == 0x140,
+                "Wrong size: RacingCar"
+            )
+        };
     }
 
     pub fn GetTotalLapScore(&self) -> f32 {
@@ -43,7 +48,7 @@ pub unsafe extern "cdecl" fn GetTotalLapScore_Hook() -> f32 {
 }
 
 // Will I need the type?
-type orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore =  fn();
+type orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore = fn();
 static mut orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore: *const () = std::ptr::null();
 
 #[unsafe(no_mangle)]
