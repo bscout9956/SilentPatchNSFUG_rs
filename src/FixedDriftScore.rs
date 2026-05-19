@@ -2,9 +2,6 @@ use std::{arch::naked_asm, mem};
 
 use crate::{NAKED_FUNC_EPILOG, NAKED_FUNC_PROLOG};
 
-
-
-#[allow(non_snake_case)]
 #[repr(C)]
 struct RacingCar {
     // Not using char for field_0 as char in Rust is Unicode (4 bytes)
@@ -13,7 +10,6 @@ struct RacingCar {
     pub gap10C: [u8; 52],
 }
 
-#[allow(non_snake_case)]
 impl RacingCar {
     // We only define this, this isn't meant to be called. It's a compile time check.
     fn _assert_size() {
@@ -43,5 +39,21 @@ pub unsafe extern "cdecl" fn GetTotalLapScore_Hook() -> f32 {
         NAKED_FUNC_EPILOG!(),
 
         get_score_fn = sym RacingCar::GetTotalLapScore,
+    )
+}
+
+// Will I need the type?
+type orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore =  fn();
+static mut orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore: *const () = std::ptr::null();
+
+#[unsafe(no_mangle)]
+#[unsafe(naked)]
+pub unsafe extern "cdecl" fn CheckForMagazineTaskCompletion_BeatingPresetDriftScore_Hook() {
+    naked_asm!(
+        // Original comment: Convert the value in eax from float to int
+        "movss xmm0, eax",
+        "cvttss2si eax, xmm0",
+        "jmp dword ptr [{x}]",
+        x = sym orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore,
     )
 }
