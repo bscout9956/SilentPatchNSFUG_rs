@@ -115,7 +115,6 @@ mod details {
     struct basic_pattern {
         m_bytes: Vec<u8>,
         m_mask: Vec<u8>,
-        // TODO: Add CFG for patterns_use_hints
         m_matches: Vec<pattern_match>,
 
         #[cfg(feature = "patterns_use_hints")]
