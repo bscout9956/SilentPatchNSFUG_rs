@@ -277,6 +277,7 @@ mod details {
             self.m_matches.len() == max_count
         }
 
+        // Some help of LLM was used here
         fn EnsureMatches(&mut self, maxCount: usize) {
             if self.m_matched {
                 return;
