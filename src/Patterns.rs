@@ -123,6 +123,8 @@ mod details {
 
     use windows_sys::Win32::System::LibraryLoader::GetModuleHandleA;
 
+    #[cfg(feature = "patterns_use_hints")]
+    use crate::Patterns::fnv_1;
     use crate::Patterns::hook::pattern_match;
 
     struct basic_pattern {
@@ -130,6 +132,9 @@ mod details {
         m_mask: Vec<u8>,
         // TODO: Add CFG for patterns_use_hints
         m_matches: Vec<pattern_match>,
+
+        #[cfg(feature = "patterns_use_hints")]
+        m_hash: u64,
 
         m_matched: bool,
 
@@ -146,6 +151,8 @@ mod details {
             Self {
                 m_rangeStart: begin,
                 m_rangeEnd: end.unwrap_or(0),
+                #[cfg(feature = "patterns_use_hints")]
+                m_hash: 0,
                 m_bytes: Vec::new(),
                 m_mask: Vec::new(),
                 m_matches: Vec::new(),
@@ -213,7 +220,13 @@ mod details {
         }
 
         fn Initialize(&mut self, pattern: &[u8]) {
-            // TODO: Add patterns use hints
+            #[cfg(feature = "patterns_use_hints")]
+            // Attributes on expressions are "experimental" in rust atm, so we just use a block to "bypass" it
+            // In practicality we're still assigning the value so it should be ok.
+            {
+                self.m_hash = fnv_1::hash(pattern);
+            }
+
             pattern_match::TransformPattern(pattern, &mut self.m_bytes, &mut self.m_mask);
 
             // TODO: Add patterns use hints
