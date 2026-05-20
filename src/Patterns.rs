@@ -7,11 +7,6 @@ use crate::{
     win_types::IMAGE_NT_HEADER,
 };
 
-pub trait FnvConfig {
-    const PRIME: u64;
-    const OFFSET_BASIS: u64;
-}
-
 pub struct BasicFnv1<const PRIME: u64, const OFFSET_BASIS: u64>;
 
 // LLM helped me with this, I don't understand it
