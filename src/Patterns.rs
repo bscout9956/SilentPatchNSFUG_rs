@@ -233,22 +233,55 @@ mod details {
 
             pattern_match::TransformPattern(pattern, &mut self.m_bytes, &mut self.m_mask);
 
-            // TODO: Add patterns use hints
-
-            // TODO: Only perform block if CAN_SERIALIZE_HITNS
-
+            // Needed some LLM help for this portion
+            #[cfg(feature = "patterns_use_hints")]
             {
-                // let range = getHints().equal_range(m_hash);
+                #[cfg(feature = "patterns_can_serialize_hints")]
+                let check_hints =
+                    self.m_rangeStart == unsafe { GetModuleHandleA(std::ptr::null()) as usize };
+
+                #[cfg(not(feature = "patterns_can_serialize_hints"))]
+                let check_hints = true;
+                if check_hints {
+                    let mutex = pattern_match::getHints();
+                    let hints = mutex.lock().unwrap();
+
+                    if let Some(addresses) = hints.get(&self.m_hash) {
+                        for &address in addresses {
+                            self.consider_hint(address);
+                        }
+
+                        if !self.m_matches.is_empty() {
+                            self.m_matched = true;
+                        }
+                    }
+                }
             }
         }
 
-        // TODO: Unsure how to implement this part
-        // explicit basic_pattern_impl(std::string_view pattern)
-        // 		: basic_pattern_impl(get_process_base())
-        // 	{
-        // 		Initialize(std::move(pattern));
-        // 	}
-        // fn new()
+        fn consider_hint(&mut self, offset: usize) -> bool {
+            let ptr = offset as *const u8;
+
+            #[cfg(feature = "patterns_can_serialize_hints")]
+            {
+                let pattern: &[u8] = &self.m_bytes;
+                let mask: &[u8] = &self.m_mask;
+
+                let mut i: usize = 0;
+                let j: usize = self.m_mask.len();
+                while i < j {
+                    let byte = unsafe { *ptr.add(i) };
+                    if pattern[i] != (byte & mask[i]) {
+                        return false;
+                    }
+                    i += 1;
+                }
+            }
+
+            self.m_matches.push(pattern_match::new(ptr as *mut c_void));
+
+            true
+        }
     }
 
     fn get_process_base() -> usize {
