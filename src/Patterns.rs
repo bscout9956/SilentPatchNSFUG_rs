@@ -127,7 +127,7 @@ mod details {
 
     #[cfg(feature = "patterns_use_hints")]
     use crate::Patterns::fnv_1;
-    use crate::Patterns::hook::pattern_match;
+    use crate::Patterns::{executable_meta, hook::pattern_match};
 
     struct basic_pattern {
         m_bytes: Vec<u8>,
