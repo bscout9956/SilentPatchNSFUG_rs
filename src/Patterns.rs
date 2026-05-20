@@ -146,7 +146,7 @@ mod details {
 
     impl basic_pattern {
         fn get_internal(&self, index: usize) -> pattern_match {
-            return self.m_matches[index];
+            self.m_matches[index]
         }
 
         fn new_begin_end(begin: isize, end: Option<isize>) -> Self {
@@ -280,10 +280,47 @@ mod details {
 
             true
         }
+
+        fn matchSuccess(&self, address: usize, max_count: usize) -> bool {
+            #[cfg(feature = "patterns_use_hints")]
+            {
+                let mutex = pattern_match::getHints();
+                let mut hints = mutex.lock().unwrap();
+                hints.entry(self.m_hash).or_default().push(address);
+            }
+            #[cfg(not(feature = "patterns_use_hints"))]
+            {
+                // TODO: Verify this
+                address = address as *const c_void;
+            }
+
+            self.m_matches.len() == max_count
+        }
+
+        fn EnsureMatches(&mut self, maxCount: u32) {
+            if self.m_matched {
+                return;
+            }
+
+            let executable: executable_meta = if self.m_rangeStart != 0 && self.m_rangeEnd != 0 {
+                executable_meta::new_begin_end(self.m_rangeStart, self.m_rangeEnd)
+            } else {
+                executable_meta::new(self.m_rangeStart)
+            };
+
+            let pattern = &self.m_bytes;
+            let mask = &self.m_mask;
+            let mask_size = &self.m_mask.len();
+            let last_wild = self.m_mask.iter().rposition(|&b| b != 0xFF);
+
+            let fill_value = last_wild.map_or(-1, |idx| idx as isize);
+
+            let mut Last: [isize; 256] = [fill_value; 256];
+        }
     }
 
-    fn get_process_base() -> usize {
-        unsafe { GetModuleHandleA(std::ptr::null()) as usize }
+    fn get_process_base() -> isize {
+        unsafe { GetModuleHandleA(std::ptr::null()) as isize }
     }
 }
 
