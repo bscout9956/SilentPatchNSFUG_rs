@@ -350,8 +350,6 @@ mod details {
     }
 }
 
-mod txn {}
-
 struct executable_meta {
     m_begin: usize,
     m_end: usize,
