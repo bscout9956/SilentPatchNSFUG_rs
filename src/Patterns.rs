@@ -9,7 +9,7 @@ pub struct BasicFnv1<C: FnvConfig> {
 }
 
 impl<C: FnvConfig> BasicFnv1<C> {
-    pub fn hash(&self, text: &[u8]) -> u64 {
+    pub fn hash(text: &[u8]) -> u64 {
         let mut hash: u64 = C::OFFSET_BASIS;
         for &it in text {
             // Permits overflows without a panic
