@@ -196,6 +196,20 @@ impl<P: ErrPolicy> BasicPattern<P> {
         }
     }
 }
+
+pub type Pattern = BasicPattern<AssertErrPolicy>;
+
+pub mod txn {
+    use crate::Patterns::{BasicPattern, ExceptionErrPolicy};
+
+    pub type Pattern = BasicPattern<ExceptionErrPolicy>;
+
+    pub fn get_pattern<T>(pattern_string: &[u8], offset: isize) -> *mut T {
+        Pattern::new(pattern_string).get_first::<T>(offset)
+    }
+}
+
+// Ends here
 mod details {
     use std::os::raw::c_void;
 
