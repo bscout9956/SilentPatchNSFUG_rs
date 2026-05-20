@@ -177,7 +177,7 @@ impl<P: ErrPolicy> BasicPattern<P> {
     }
 
     pub fn get_one(self) -> pattern_match {
-        return self.count(1).inner.get_internal(0);
+        self.count(1).inner.get_internal(0)
     }
 
     pub fn get_first<T>(self, offset: isize) -> *mut T {
