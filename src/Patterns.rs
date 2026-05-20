@@ -1,6 +1,11 @@
+use std::{marker::PhantomData, os::raw::c_void};
+
 use windows_sys::Win32::System::SystemServices::IMAGE_DOS_HEADER;
 
-use crate::win_types::IMAGE_NT_HEADER;
+use crate::{
+    Patterns::{details::basic_pattern, hook::pattern_match},
+    win_types::IMAGE_NT_HEADER,
+};
 
 pub trait FnvConfig {
     const PRIME: u64;
@@ -24,7 +29,7 @@ impl<const PRIME: u64, const OFFSET_BASIS: u64> BasicFnv1<PRIME, OFFSET_BASIS> {
 
 pub type fnv_1 = BasicFnv1<1_099_511_628_211, 14_695_981_039_346_656_037>;
 
-mod hook {
+pub mod hook {
     use std::ffi::c_void;
     #[cfg(feature = "patterns_use_hints")]
     use std::{collections::BTreeMap, sync::Mutex};
