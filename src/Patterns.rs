@@ -1,3 +1,7 @@
+use windows_sys::Win32::System::SystemServices::IMAGE_DOS_HEADER;
+
+use crate::win_types::IMAGE_NT_HEADER;
+
 pub trait FnvConfig {
     const PRIME: u64;
     const OFFSET_BASIS: u64;
