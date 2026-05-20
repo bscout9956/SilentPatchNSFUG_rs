@@ -23,7 +23,7 @@ impl<const PRIME: u64, const OFFSET_BASIS: u64> BasicFnv1<PRIME, OFFSET_BASIS> {
 pub type fnv_1 = BasicFnv1<1_099_511_628_211, 14_695_981_039_346_656_037>;
 
 mod hook {
-    use std::ffi::{c_char, c_void};
+    use std::ffi::c_void;
     #[cfg(feature = "patterns_use_hints")]
     use std::{collections::BTreeMap, sync::Mutex};
 
