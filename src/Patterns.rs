@@ -140,8 +140,8 @@ mod details {
 
         m_matched: bool,
 
-        m_rangeStart: usize,
-        m_rangeEnd: usize,
+        m_rangeStart: isize,
+        m_rangeEnd: isize,
     }
 
     impl basic_pattern {
@@ -149,7 +149,7 @@ mod details {
             return self.m_matches[index];
         }
 
-        fn new_begin_end(begin: usize, end: Option<usize>) -> Self {
+        fn new_begin_end(begin: isize, end: Option<isize>) -> Self {
             Self {
                 m_rangeStart: begin,
                 m_rangeEnd: end.unwrap_or(0),
@@ -163,20 +163,20 @@ mod details {
         }
 
         fn new_pattern(pattern: &[u8]) -> Self {
-            let base: usize = get_process_base();
+            let base: isize = get_process_base();
             let mut pattern_instance = Self::new_begin_end(base, None);
             pattern_instance.Initialize(pattern);
             pattern_instance
         }
 
         fn new_module(module: *const c_void, pattern: &[u8]) -> Self {
-            let address = module as usize;
+            let address = module as isize;
             let mut pattern_instance = Self::new_begin_end(address, None);
             pattern_instance.Initialize(pattern);
             pattern_instance
         }
 
-        fn new_pattern_begin_end(begin: usize, end: usize, pattern: &[u8]) -> Self {
+        fn new_pattern_begin_end(begin: isize, end: isize, pattern: &[u8]) -> Self {
             let mut pattern_instance = Self::new_begin_end(begin, Some(end));
             pattern_instance.Initialize(pattern);
             pattern_instance
@@ -193,13 +193,13 @@ mod details {
 
         fn new_module_bytes_mask(module: *const c_void, bytes: &[u8], mask: &[u8]) -> Self {
             assert!(bytes.len() == mask.len());
-            let mut pattern_instance = Self::new_begin_end(module as usize, None);
+            let mut pattern_instance = Self::new_begin_end(module as isize, None);
             pattern_instance.m_bytes = bytes.to_vec();
             pattern_instance.m_mask = mask.to_vec();
             pattern_instance
         }
 
-        fn new_begin_end_bytes_mask(begin: usize, end: usize, bytes: &[u8], mask: &[u8]) -> Self {
+        fn new_begin_end_bytes_mask(begin: isize, end: isize, bytes: &[u8], mask: &[u8]) -> Self {
             assert!(bytes.len() == mask.len());
             let mut pattern_instance = Self::new_begin_end(begin, Some(end));
             pattern_instance.m_bytes = bytes.to_vec();
@@ -236,7 +236,7 @@ mod details {
             {
                 #[cfg(feature = "patterns_can_serialize_hints")]
                 let check_hints =
-                    self.m_rangeStart == unsafe { GetModuleHandleA(std::ptr::null()) as usize };
+                    self.m_rangeStart == unsafe { GetModuleHandleA(std::ptr::null()) as isize };
 
                 #[cfg(not(feature = "patterns_can_serialize_hints"))]
                 let check_hints = true;
@@ -290,29 +290,29 @@ mod details {
 mod txn {}
 
 struct executable_meta {
-    m_begin: usize,
-    m_end: usize,
+    m_begin: isize,
+    m_end: isize,
 }
 
 impl executable_meta {
-    fn new(module: usize) -> Self {
+    fn new(module: isize) -> Self {
         unsafe {
             let dosHeader: *const IMAGE_DOS_HEADER = module as *const IMAGE_DOS_HEADER;
             let ntHeader: *const IMAGE_NT_HEADER =
-                (module + (*dosHeader).e_lfanew as usize) as *const IMAGE_NT_HEADER;
+                (module + (*dosHeader).e_lfanew as isize) as *const IMAGE_NT_HEADER;
 
-            let m_begin = module + (*ntHeader).OptionalHeader.BaseOfCode as usize;
+            let m_begin = module + (*ntHeader).OptionalHeader.BaseOfCode as isize;
             let mut executable_meta_instance = Self {
                 m_begin,
-                m_end: m_begin + (*ntHeader).OptionalHeader.SizeOfCode as usize,
+                m_end: m_begin + (*ntHeader).OptionalHeader.SizeOfCode as isize,
             };
 
             // Original comment:
             // Executables with DRM bypassed may lie in their SizeOfCode and underreport severely
             // We can somewhat detect this by checking if the code entry point is past
             // these boundaries. It's not perfect, but it's safe.
-            let entryPoint: usize =
-                module + (*ntHeader).OptionalHeader.AddressOfEntryPoint as usize;
+            let entryPoint: isize =
+                module + (*ntHeader).OptionalHeader.AddressOfEntryPoint as isize;
 
             if entryPoint >= m_begin && entryPoint <= executable_meta_instance.m_end {
                 return executable_meta_instance;
@@ -320,16 +320,16 @@ impl executable_meta {
 
             // Original comment:
             // Alternate heuristics - scan the entire executable, minus headers
-            let sizeOfHeaders: usize = (*ntHeader).OptionalHeader.SizeOfHeaders as usize;
+            let sizeOfHeaders: isize = (*ntHeader).OptionalHeader.SizeOfHeaders as isize;
             executable_meta_instance.m_begin = module + sizeOfHeaders;
             executable_meta_instance.m_end =
-                module + (*ntHeader).OptionalHeader.SizeOfImage as usize - sizeOfHeaders;
+                module + (*ntHeader).OptionalHeader.SizeOfImage as isize - sizeOfHeaders;
 
             executable_meta_instance
         }
     }
 
-    fn new_begin_end(begin: usize, end: usize) -> Self {
+    fn new_begin_end(begin: isize, end: isize) -> Self {
         Self {
             m_begin: begin,
             m_end: end,
@@ -337,12 +337,12 @@ impl executable_meta {
     }
 
     #[inline]
-    fn begin(&self) -> usize {
+    fn begin(&self) -> isize {
         self.m_begin
     }
 
     #[inline]
-    fn end(&self) -> usize {
+    fn end(&self) -> isize {
         self.m_end
     }
 }
