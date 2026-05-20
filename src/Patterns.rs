@@ -20,7 +20,6 @@ impl<C: FnvConfig> BasicFnv1<C> {
             hash = hash.wrapping_mul(C::PRIME);
             hash ^= it as u64;
         }
-
         hash
     }
 }
@@ -32,6 +31,7 @@ impl FnvConfig for Fnv64Constants {
 }
 
 pub type basic_fnv_1 = BasicFnv1<Fnv64Constants>;
+pub type fnv_1 = basic_fnv_1;
 
 mod hook {
     use std::ffi::{c_char, c_void};
