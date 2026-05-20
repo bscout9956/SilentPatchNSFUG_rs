@@ -289,7 +289,7 @@ mod details {
             self.m_matches.len() == max_count
         }
 
-        fn EnsureMatches(&mut self, maxCount: u32) {
+        fn EnsureMatches(&mut self, maxCount: usize) {
             if self.m_matched {
                 return;
             }
@@ -305,7 +305,7 @@ mod details {
             let mask_size: usize = self.m_mask.len();
             let last_wild: Option<usize> = self.m_mask.iter().rposition(|&b| b != 0xFF);
 
-            let fill_value = last_wild.map_or(-1, |idx| idx as isize);
+            let fill_value: isize = last_wild.map_or(-1, |idx| idx as isize);
 
             let mut Last: [isize; 256] = [fill_value; 256];
 
@@ -315,6 +315,39 @@ mod details {
                     Last[byte_val] = i as isize;
                 }
             }
+
+            let mut i: usize = executable.begin();
+            let end: usize = executable.end() - mask_size;
+
+            while i <= end {
+                let ptr = i as *const u8;
+                let mut j: isize = (mask_size - 1) as isize;
+
+                unsafe {
+                    while j >= 0 && pattern[j as usize] == (*ptr.add(j as usize) & mask[j as usize])
+                    {
+                        j -= 1;
+                    }
+                }
+
+                if j < 0 {
+                    self.m_matches.push(pattern_match::new(ptr as *mut c_void));
+
+                    if self.matchSuccess(i, maxCount) {
+                        break;
+                    }
+                    i += 1;
+                } else {
+                    unsafe {
+                        let bad_char: u8 = *ptr.add(j as usize);
+                        let shift: isize = j - Last[bad_char as usize];
+
+                        i += std::cmp::max(1, shift) as usize;
+                    }
+                }
+            }
+
+            self.m_matched = true;
         }
     }
 
