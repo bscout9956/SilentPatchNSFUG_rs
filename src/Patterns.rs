@@ -7,11 +7,6 @@ use crate::{
     win_types::IMAGE_NT_HEADER,
 };
 
-pub trait FnvConfig {
-    const PRIME: u64;
-    const OFFSET_BASIS: u64;
-}
-
 pub struct BasicFnv1<const PRIME: u64, const OFFSET_BASIS: u64>;
 
 // LLM helped me with this, I don't understand it
@@ -106,6 +101,115 @@ pub mod hook {
     }
 }
 
+// ErrPolicy and Implementation for BasicPattern with it written with LLM assistance (till "ends here")
+// There was just too much abstraction that I could not understand...
+pub trait ErrPolicy {
+    fn handle_count_mismatch(expected: usize, actual: usize);
+}
+
+pub struct AssertErrPolicy;
+
+impl ErrPolicy for AssertErrPolicy {
+    fn handle_count_mismatch(expected: usize, actual: usize) {
+        panic!(
+            "Pattern match count mismatch. Expected {}, got {}",
+            expected, actual
+        );
+    }
+}
+
+pub struct ExceptionErrPolicy;
+impl ErrPolicy for ExceptionErrPolicy {
+    fn handle_count_mismatch(_expected: usize, _actual: usize) {
+        panic!("txn_exception");
+    }
+}
+
+pub struct BasicPattern<P: ErrPolicy> {
+    inner: basic_pattern,
+    _marker: PhantomData<P>,
+}
+
+impl<P: ErrPolicy> BasicPattern<P> {
+    pub fn new(pattern: &[u8]) -> Self {
+        Self {
+            inner: basic_pattern::new_pattern(pattern),
+            _marker: PhantomData,
+        }
+    }
+
+    pub fn new_module(module: *const c_void, pattern: &[u8]) -> Self {
+        Self {
+            inner: basic_pattern::new_module(module, pattern),
+            _marker: PhantomData,
+        }
+    }
+
+    pub fn count(mut self, expected: usize) -> Self {
+        self.inner.EnsureMatches(expected);
+        if self.inner.m_matches.len() != expected {
+            P::handle_count_mismatch(expected, self.inner.m_matches.len());
+        }
+        self
+    }
+
+    pub fn count_hint(mut self, expected: usize) -> Self {
+        self.inner.EnsureMatches(expected);
+        self
+    }
+
+    pub fn clear(mut self) -> Self {
+        self.inner.m_matches.clear();
+        self.inner.m_matched = false;
+        self
+    }
+
+    pub fn size(&mut self) -> usize {
+        self.inner.EnsureMatches(usize::MAX);
+        self.inner.m_matches.len()
+    }
+
+    pub fn is_empty(&mut self) -> bool {
+        self.inner.m_matches.len() == 0
+    }
+
+    pub fn get(&mut self, index: usize) -> pattern_match {
+        self.inner.EnsureMatches(usize::MAX);
+        self.inner.get_internal(index)
+    }
+
+    pub fn get_one(self) -> pattern_match {
+        return self.count(1).inner.get_internal(0);
+    }
+
+    pub fn get_first<T>(self, offset: isize) -> *mut T {
+        self.get_one().get::<T>(offset)
+    }
+
+    pub fn for_each_result<F>(&mut self, mut pred: F)
+    where
+        F: FnMut(pattern_match),
+    {
+        self.inner.EnsureMatches(usize::MAX);
+        for &match_result in &self.inner.m_matches {
+            pred(match_result);
+        }
+    }
+}
+
+pub type Pattern = BasicPattern<AssertErrPolicy>;
+
+pub mod txn {
+    use crate::Patterns::{BasicPattern, ExceptionErrPolicy};
+
+    pub type Pattern = BasicPattern<ExceptionErrPolicy>;
+
+    pub fn get_pattern<T>(pattern_string: &[u8], offset: isize) -> *mut T {
+        Pattern::new(pattern_string).get_first::<T>(offset)
+    }
+}
+
+// Ends here
 mod details {
     use std::os::raw::c_void;
 
