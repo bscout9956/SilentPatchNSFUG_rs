@@ -338,7 +338,7 @@ impl executable_meta {
                 (module + (*dosHeader).e_lfanew as usize) as *const IMAGE_NT_HEADER;
 
             let m_begin = module + (*ntHeader).OptionalHeader.BaseOfCode as usize;
-            let mut executable_meta_instance = Self {
+            let mut meta = Self {
                 m_begin,
                 m_end: m_begin + (*ntHeader).OptionalHeader.SizeOfCode as usize,
             };
@@ -350,18 +350,17 @@ impl executable_meta {
             let entryPoint: usize =
                 module + (*ntHeader).OptionalHeader.AddressOfEntryPoint as usize;
 
-            if entryPoint >= m_begin && entryPoint <= executable_meta_instance.m_end {
-                return executable_meta_instance;
+            if entryPoint >= m_begin && entryPoint <= meta.m_end {
+                return meta;
             }
 
             // Original comment:
             // Alternate heuristics - scan the entire executable, minus headers
             let sizeOfHeaders: usize = (*ntHeader).OptionalHeader.SizeOfHeaders as usize;
-            executable_meta_instance.m_begin = module + sizeOfHeaders;
-            executable_meta_instance.m_end =
-                module + (*ntHeader).OptionalHeader.SizeOfImage as usize - sizeOfHeaders;
+            meta.m_begin = module + sizeOfHeaders;
+            meta.m_end = module + (*ntHeader).OptionalHeader.SizeOfImage as usize - sizeOfHeaders;
 
-            executable_meta_instance
+            meta
         }
     }
 
