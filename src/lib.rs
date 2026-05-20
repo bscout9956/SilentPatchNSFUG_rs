@@ -8,6 +8,7 @@ use windows_sys::Win32::{Foundation::HMODULE, System::LibraryLoader::GetModuleHa
 
 mod FixedDateFormat;
 mod FixedDriftScore;
+mod MemoryMgr;
 mod Patterns;
 mod ScopedUnprotect;
 mod macros;
