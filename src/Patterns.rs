@@ -253,3 +253,61 @@ mod details {
 }
 
 mod txn {}
+
+struct executable_meta {
+    m_begin: usize,
+    m_end: usize,
+}
+
+impl executable_meta {
+    fn new(module: usize) -> Self {
+        unsafe {
+            let dosHeader: *const IMAGE_DOS_HEADER = module as *const IMAGE_DOS_HEADER;
+            let ntHeader: *const IMAGE_NT_HEADER =
+                (module + (*dosHeader).e_lfanew as usize) as *const IMAGE_NT_HEADER;
+
+            let m_begin = module + (*ntHeader).OptionalHeader.BaseOfCode as usize;
+            let mut executable_meta_instance = Self {
+                m_begin,
+                m_end: m_begin + (*ntHeader).OptionalHeader.SizeOfCode as usize,
+            };
+
+            // Original comment:
+            // Executables with DRM bypassed may lie in their SizeOfCode and underreport severely
+            // We can somewhat detect this by checking if the code entry point is past
+            // these boundaries. It's not perfect, but it's safe.
+            let entryPoint: usize =
+                module + (*ntHeader).OptionalHeader.AddressOfEntryPoint as usize;
+
+            if entryPoint >= m_begin && entryPoint <= executable_meta_instance.m_end {
+                return executable_meta_instance;
+            }
+
+            // Original comment:
+            // Alternate heuristics - scan the entire executable, minus headers
+            let sizeOfHeaders: usize = (*ntHeader).OptionalHeader.SizeOfHeaders as usize;
+            executable_meta_instance.m_begin = module + sizeOfHeaders;
+            executable_meta_instance.m_end =
+                module + (*ntHeader).OptionalHeader.SizeOfImage as usize - sizeOfHeaders;
+
+            executable_meta_instance
+        }
+    }
+
+    fn new_begin_end(begin: usize, end: usize) -> Self {
+        Self {
+            m_begin: begin,
+            m_end: end,
+        }
+    }
+
+    #[inline]
+    fn begin(&self) -> usize {
+        self.m_begin
+    }
+
+    #[inline]
+    fn end(&self) -> usize {
+        self.m_end
+    }
+}
