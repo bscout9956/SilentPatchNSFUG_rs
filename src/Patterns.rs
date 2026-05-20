@@ -7,6 +7,8 @@ pub trait FnvConfig {
     const OFFSET_BASIS: u64;
 }
 
+pub struct BasicFnv1<const PRIME: u64, const OFFSET_BASIS: u64>;
+
 // LLM helped me with this, I don't understand it
 impl<const PRIME: u64, const OFFSET_BASIS: u64> BasicFnv1<PRIME, OFFSET_BASIS> {
     pub fn hash(text: &[u8]) -> u64 {
