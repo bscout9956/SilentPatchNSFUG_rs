@@ -102,8 +102,6 @@ mod hook {
 }
 
 mod details {
-    // ptrdiff_t get_process_base(); ???
-
     use std::os::raw::c_void;
 
     use windows_sys::Win32::System::LibraryLoader::GetModuleHandleA;
