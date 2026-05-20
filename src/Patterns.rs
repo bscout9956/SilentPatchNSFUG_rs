@@ -54,7 +54,7 @@ mod hook {
     }
 
     impl pattern_match {
-        pub fn new(&self, pointer: *mut c_void) -> Self {
+        pub fn new(pointer: *mut c_void) -> Self {
             Self { m_pointer: pointer }
         }
 
