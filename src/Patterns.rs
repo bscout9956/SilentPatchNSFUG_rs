@@ -37,8 +37,6 @@ pub mod hook {
         }
     }
 
-    // TODO: Pattern enable exceptions
-
     #[derive(Copy, Clone)]
     pub struct pattern_match {
         m_pointer: *mut c_void,
