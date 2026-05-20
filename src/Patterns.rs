@@ -79,26 +79,19 @@ mod hook {
             let mut tempDigit: u8 = 0;
             let mut tempFlag: bool = false;
 
-            fn tol(ch: c_char) -> u8 {
-                let byte = ch as u8;
-
+            for &byte in pattern {
                 match byte {
-                    b'A'..=b'F' => byte - b'A' + 10,
-                    b'a'..=b'f' => byte - b'a' + 10,
-                    _ => byte - b'0',
-                }
-            }
-
-            for ch in pattern {
-                let byte = *ch;
-                match byte {
-                    b' ' => {}
+                    b' ' => continue,
                     b'?' => {
                         data.push(0);
                         mask.push(0);
                     }
                     b'0'..=b'9' | b'A'..=b'F' | b'a'..=b'f' => {
-                        let thisDigit: u8 = tol(byte as i8);
+                        let thisDigit = match byte {
+                            b'A'..=b'F' => byte - b'A' + 10,
+                            b'a'..=b'f' => byte - b'a' + 10,
+                            _ => byte - b'0',
+                        };
 
                         if !tempFlag {
                             tempDigit = thisDigit << 4;
@@ -106,7 +99,6 @@ mod hook {
                         } else {
                             tempDigit |= thisDigit;
                             tempFlag = false;
-
                             data.push(tempDigit);
                             mask.push(0xFF);
                         }
@@ -317,13 +309,11 @@ mod details {
 
             let mut Last: [isize; 256] = [fill_value; 256];
 
-            let mut i: isize = 0;
-            while i < mask_size as isize {
-                if Last[pattern[i]] < i {
-                    Last[pattern[i]] = i;
+            for i in 0..mask_size {
+                let byte_val = pattern[i] as usize;
+                if Last[byte_val] < i as isize {
+                    Last[byte_val] = i as isize;
                 }
-
-                i += 1;
             }
         }
     }
