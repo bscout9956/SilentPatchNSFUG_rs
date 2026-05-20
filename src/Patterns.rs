@@ -8,30 +8,19 @@ pub trait FnvConfig {
 }
 
 // LLM helped me with this, I don't understand it
-pub struct BasicFnv1<C: FnvConfig> {
-    _marker: std::marker::PhantomData<C>,
-}
-
-impl<C: FnvConfig> BasicFnv1<C> {
+impl<const PRIME: u64, const OFFSET_BASIS: u64> BasicFnv1<PRIME, OFFSET_BASIS> {
     pub fn hash(text: &[u8]) -> u64 {
-        let mut hash: u64 = C::OFFSET_BASIS;
+        let mut hash: u64 = OFFSET_BASIS;
         for &it in text {
             // Permits overflows without a panic
-            hash = hash.wrapping_mul(C::PRIME);
+            hash = hash.wrapping_mul(PRIME);
             hash ^= it as u64;
         }
         hash
     }
 }
 
-pub struct Fnv64Constants;
-impl FnvConfig for Fnv64Constants {
-    const PRIME: u64 = 1_099_511_628_211;
-    const OFFSET_BASIS: u64 = 14_695_981_039_346_656_037;
-}
-
-pub type basic_fnv_1 = BasicFnv1<Fnv64Constants>;
-pub type fnv_1 = basic_fnv_1;
+pub type fnv_1 = BasicFnv1<1_099_511_628_211, 14_695_981_039_346_656_037>;
 
 mod hook {
     use std::ffi::{c_char, c_void};
