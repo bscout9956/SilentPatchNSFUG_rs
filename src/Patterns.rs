@@ -110,26 +110,26 @@ mod details {
     use crate::Patterns::fnv_1;
     use crate::Patterns::{executable_meta, hook::pattern_match};
 
-    struct basic_pattern {
+    pub struct basic_pattern {
         m_bytes: Vec<u8>,
         m_mask: Vec<u8>,
-        m_matches: Vec<pattern_match>,
+        pub m_matches: Vec<pattern_match>,
 
         #[cfg(feature = "patterns_use_hints")]
         m_hash: u64,
 
-        m_matched: bool,
+        pub m_matched: bool,
 
         m_rangeStart: usize,
         m_rangeEnd: usize,
     }
 
     impl basic_pattern {
-        fn get_internal(&self, index: usize) -> pattern_match {
+        pub fn get_internal(&self, index: usize) -> pattern_match {
             self.m_matches[index]
         }
 
-        fn new_begin_end(begin: usize, end: Option<usize>) -> Self {
+        pub fn new_begin_end(begin: usize, end: Option<usize>) -> Self {
             Self {
                 m_rangeStart: begin,
                 m_rangeEnd: end.unwrap_or(0),
@@ -142,28 +142,28 @@ mod details {
             }
         }
 
-        fn new_pattern(pattern: &[u8]) -> Self {
+        pub fn new_pattern(pattern: &[u8]) -> Self {
             let base: usize = get_process_base() as usize;
             let mut pattern_instance = Self::new_begin_end(base, None);
             pattern_instance.Initialize(pattern);
             pattern_instance
         }
 
-        fn new_module(module: *const c_void, pattern: &[u8]) -> Self {
+        pub fn new_module(module: *const c_void, pattern: &[u8]) -> Self {
             let address = module as usize;
             let mut pattern_instance = Self::new_begin_end(address, None);
             pattern_instance.Initialize(pattern);
             pattern_instance
         }
 
-        fn new_pattern_begin_end(begin: usize, end: usize, pattern: &[u8]) -> Self {
+        pub fn new_pattern_begin_end(begin: usize, end: usize, pattern: &[u8]) -> Self {
             let mut pattern_instance = Self::new_begin_end(begin, Some(end));
             pattern_instance.Initialize(pattern);
             pattern_instance
         }
 
         // Pretransformed patterns
-        fn new_pattern_bytes_mask(bytes: &[u8], mask: &[u8]) -> Self {
+        pub fn new_pattern_bytes_mask(bytes: &[u8], mask: &[u8]) -> Self {
             assert!(bytes.len() == mask.len());
             let mut pattern_instance = Self::new_begin_end(get_process_base() as usize, None);
             pattern_instance.m_bytes = bytes.to_vec();
@@ -171,7 +171,7 @@ mod details {
             pattern_instance
         }
 
-        fn new_module_bytes_mask(module: *const c_void, bytes: &[u8], mask: &[u8]) -> Self {
+        pub fn new_module_bytes_mask(module: *const c_void, bytes: &[u8], mask: &[u8]) -> Self {
             assert!(bytes.len() == mask.len());
             let mut pattern_instance = Self::new_begin_end(module as usize, None);
             pattern_instance.m_bytes = bytes.to_vec();
@@ -179,7 +179,12 @@ mod details {
             pattern_instance
         }
 
-        fn new_begin_end_bytes_mask(begin: usize, end: usize, bytes: &[u8], mask: &[u8]) -> Self {
+        pub fn new_begin_end_bytes_mask(
+            begin: usize,
+            end: usize,
+            bytes: &[u8],
+            mask: &[u8],
+        ) -> Self {
             assert!(bytes.len() == mask.len());
             let mut pattern_instance = Self::new_begin_end(begin, Some(end));
             pattern_instance.m_bytes = bytes.to_vec();
@@ -278,7 +283,7 @@ mod details {
         }
 
         // Some help of LLM was used here
-        fn EnsureMatches(&mut self, maxCount: usize) {
+        pub fn EnsureMatches(&mut self, maxCount: usize) {
             if self.m_matched {
                 return;
             }
