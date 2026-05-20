@@ -59,9 +59,7 @@ mod hook {
         }
 
         pub fn get<T>(&self, offset: isize) -> *mut T {
-            unsafe {
-                return self.m_pointer.offset(offset) as *mut T;
-            }
+            unsafe { self.m_pointer.offset(offset) as *mut T }
         }
 
         // TODO: Verify, is this what we want?
