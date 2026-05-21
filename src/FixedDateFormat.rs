@@ -1,7 +1,6 @@
 use crate::win_types::{DWORD, LCID, WORD};
 use std::ffi::c_str;
-use std::slice::from_raw_parts_mut;
-use std::{ffi::CStr, os::raw::c_char};
+use std::{ffi::CStr, os::raw::c_char, ptr};
 use windows_sys::Win32::Foundation::SYSTEMTIME;
 use windows_sys::Win32::Globalization::GetDateFormatA;
 use windows_sys::Win32::System::SystemInformation::GetLocalTime;
