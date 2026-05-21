@@ -47,6 +47,8 @@ pub mod hook {
             Self { m_pointer: pointer }
         }
 
+        /// Offset was optional, pass 0 if necessary
+        /// TODO: Rework this?
         pub fn get<T>(&self, offset: isize) -> *mut T {
             unsafe { self.m_pointer.offset(offset) as *mut T }
         }
