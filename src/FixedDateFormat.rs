@@ -145,9 +145,8 @@ pub extern "system" fn GetDateFormatA_GameLanguageFormat(
                 let str_bytes: &[u8] = formatted_str.as_bytes();
 
                 let max_byte_count: usize = (cchDate as usize - 1).min(str_bytes.len());
-                let str_slice: &mut [u8] = from_raw_parts_mut(lpDateStr, cchDate as usize);
-
-                str_slice[max_byte_count] = 0;
+                ptr::copy_nonoverlapping(str_bytes.as_ptr(), lpDateStr, max_byte_count);
+                *lpDateStr.add(max_byte_count) = 0;
 
                 (max_byte_count + 1) as i32
             }
