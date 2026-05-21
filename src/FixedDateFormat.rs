@@ -169,14 +169,14 @@ pub extern "system" fn GetDateFormatA_Fallback(
     cchDate: i32,
 ) -> i32 {
     unsafe {
-        return GetDateFormatA_NullTerminated(
+        GetDateFormatA_NullTerminated(
             Locale,
             0,
             lpDate,
             c"yyyy'.'MM'.'dd".as_ptr() as *const u8,
             lpDateStr,
             cchDate,
-        );
+        )
     }
 }
 
