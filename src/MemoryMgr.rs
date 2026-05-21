@@ -580,7 +580,6 @@ pub mod Memory {
 
             use super::DynBaseAddress;
             use crate::MemoryMgr::Memory;
-            use windows_sys::Win32::System::Diagnostics::Debug::ADDRESS;
 
             pub unsafe fn Patch_Address_Value<AT, T>(address: AT, value: T) {
                 unsafe {
