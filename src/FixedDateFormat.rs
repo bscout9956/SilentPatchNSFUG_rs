@@ -162,7 +162,7 @@ pub extern "system" fn GetDateFormatA_GameLanguageFormat(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn GetDateFormatA_Fallback(
+pub unsafe extern "system" fn GetDateFormatA_Fallback(
     Locale: LCID,
     _dwFlags: DWORD,
     lpDate: *const SYSTEMTIME,
@@ -182,7 +182,7 @@ pub extern "system" fn GetDateFormatA_Fallback(
     }
 }
 
-static mut pGetDateFormatA_SilentPatch: extern "system" fn(
+pub static mut pGetDateFormatA_SilentPatch: unsafe extern "system" fn(
     LCID,
     DWORD,
     *const SYSTEMTIME,
