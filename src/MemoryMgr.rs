@@ -46,7 +46,7 @@ pub mod Memory {
 
         unsafe {
             let addr: usize = std::mem::transmute_copy(&address);
-            std::ptr::write(addr as *mut T, value);
+            std::ptr::write_unaligned(addr as *mut T, value);
         }
     }
 
@@ -74,7 +74,7 @@ pub mod Memory {
 
         unsafe {
             let addr: usize = std::mem::transmute_copy(&address);
-            *var = std::ptr::read(addr as *const Var);
+            *var = std::ptr::read_unaligned(addr as *const Var);
         }
     }
 
@@ -106,7 +106,7 @@ pub mod Memory {
 
             let target = src - dst - (4 + offset);
 
-            std::ptr::write(dst as *mut i32, target as i32);
+            std::ptr::write_unaligned(dst as *mut i32, target as i32);
         }
     }
 
@@ -125,7 +125,7 @@ pub mod Memory {
         unsafe {
             let src_addr: isize = std::mem::transmute_copy(&address);
 
-            let offset = std::ptr::read(src_addr as *const i32) as isize;
+            let offset = std::ptr::read_unaligned(src_addr as *const i32) as isize;
             let extra_bytes = bytesAfterDisplacement;
             let dst_addr = src_addr + (4 + extra_bytes) + offset;
 
@@ -195,7 +195,7 @@ pub mod Memory {
             let addr: usize = std::mem::transmute_copy(&address);
             let func_addr: isize = std::mem::transmute_copy(&hook);
 
-            std::ptr::write(addr as *mut u8, opcode);
+            std::ptr::write_unaligned(addr as *mut u8, opcode);
             InjectHook(address, func_addr);
         }
     }
