@@ -144,6 +144,11 @@ pub extern "system" fn GetDateFormatA_GameLanguageFormat(
                     format!("{} {} {}", date_deref.wDay, month_str, date_deref.wYear);
                 let str_bytes: &[u8] = formatted_str.as_bytes();
 
+                let required_size = (str_bytes.len() + 1) as i32;
+                if cchDate <= 0 || lpDateStr.is_null() {
+                    return required_size;
+                }
+
                 let max_byte_count: usize = (cchDate as usize - 1).min(str_bytes.len());
                 ptr::copy_nonoverlapping(str_bytes.as_ptr(), lpDateStr, max_byte_count);
                 *lpDateStr.add(max_byte_count) = 0;
