@@ -84,7 +84,7 @@ pub extern "system" fn GetDateFormatA_GameLanguageFormat(
     cchDate: i32,
 ) -> i32 {
     unsafe {
-        let language: i32 = *CurrentLanguage;
+        let language: i32 = if CurrentLanguage.is_null() {0} else {*CurrentLanguage};
 
         let mut mutable_lpDate: *const SYSTEMTIME = lpDate;
         let mut local_time: SYSTEMTIME = std::mem::zeroed();
