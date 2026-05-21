@@ -7,7 +7,7 @@ use windows_sys::Win32::Globalization::GetDateFormatA;
 use windows_sys::Win32::System::SystemInformation::GetLocalTime;
 use windows_sys::core::{PCSTR, PSTR};
 
-static mut CurrentLanguage: *mut i32 = std::ptr::null_mut();
+pub static mut CurrentLanguage: *mut i32 = std::ptr::null_mut();
 
 // Used some LLM assistance.
 #[unsafe(no_mangle)]
