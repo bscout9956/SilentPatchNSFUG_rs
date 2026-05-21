@@ -507,18 +507,13 @@ pub mod Memory {
         pub unsafe fn InjectHookType<AT, Func>(address: AT, hook: Func, r#type: super::HookType) {
             unsafe {
                 let mut dwProtect: DWORD = 0;
-                let addr: DWORD_PTR = std::mem::transmute_copy(&address);
+                let addr: *mut c_void = std::mem::transmute_copy(&address);
 
-                VirtualProtect(
-                    (addr + 1) as *mut c_void,
-                    5,
-                    PAGE_EXECUTE_READWRITE,
-                    &mut dwProtect,
-                );
+                VirtualProtect(addr, 5, PAGE_EXECUTE_READWRITE, &mut dwProtect);
 
                 super::InjectHookType(DynBaseAddress(address), hook, r#type);
 
-                VirtualProtect((addr + 1) as *mut c_void, 5, dwProtect, &mut dwProtect);
+                VirtualProtect(addr, 5, dwProtect, &mut dwProtect);
             }
         }
 
