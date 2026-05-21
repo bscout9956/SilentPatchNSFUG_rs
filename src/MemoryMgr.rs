@@ -246,12 +246,6 @@ pub mod Memory {
         use super::DynBaseAddress;
         use std::ffi::c_void;
 
-        #[derive(PartialEq, Debug)]
-        pub enum HookType {
-            Call,
-            Jump,
-        }
-
         pub unsafe fn Patch_Address_Value<T, AT>(address: AT, value: T) {
             unsafe {
                 super::PatchAddressValue(DynBaseAddress(address), value);
@@ -338,14 +332,9 @@ pub mod Memory {
             }
         }
 
-        pub unsafe fn InjectHookType<AT, Func>(address: AT, hook: Func, r#type: HookType) {
+        pub unsafe fn InjectHookType<AT, Func>(address: AT, hook: Func, r#type: super::HookType) {
             unsafe {
-                super::InjectHookType(
-                    DynBaseAddress(address),
-                    hook,
-                    // Why the f- do I need transmute here, it's an enum :l
-                    std::mem::transmute::<HookType, super::HookType>(r#type),
-                );
+                super::InjectHookType(DynBaseAddress(address), hook, r#type);
             }
         }
 
@@ -377,12 +366,6 @@ pub mod Memory {
         use crate::win_types::{DWORD, DWORD_PTR};
         use std::ffi::c_void;
         use windows_sys::Win32::System::Memory::{PAGE_EXECUTE_READWRITE, VirtualProtect};
-
-        #[derive(PartialEq, Debug)]
-        pub enum HookType {
-            Call,
-            Jump,
-        }
 
         pub unsafe fn Patch_Address_Value<T, AT>(address: AT, value: T) {
             unsafe {
@@ -521,7 +504,7 @@ pub mod Memory {
             }
         }
 
-        pub unsafe fn InjectHookType<AT, Func>(address: AT, hook: Func, r#type: HookType) {
+        pub unsafe fn InjectHookType<AT, Func>(address: AT, hook: Func, r#type: super::HookType) {
             unsafe {
                 let mut dwProtect: DWORD = 0;
                 let addr: DWORD_PTR = std::mem::transmute_copy(&address);
@@ -533,12 +516,7 @@ pub mod Memory {
                     &mut dwProtect,
                 );
 
-                super::InjectHookType(
-                    DynBaseAddress(address),
-                    hook,
-                    // Why the f- do I need transmute here, it's an enum :l
-                    std::mem::transmute::<HookType, super::HookType>(r#type),
-                );
+                super::InjectHookType(DynBaseAddress(address), hook, r#type);
 
                 VirtualProtect((addr + 1) as *mut c_void, 5, dwProtect, &mut dwProtect);
             }
@@ -573,11 +551,6 @@ pub mod Memory {
         }
 
         pub mod DynBase {
-            pub enum HookType {
-                Call,
-                Jump,
-            }
-
             use super::DynBaseAddress;
             use crate::MemoryMgr::Memory;
 
@@ -675,13 +648,13 @@ pub mod Memory {
                 }
             }
 
-            pub unsafe fn InjectHookType<AT, Func>(address: AT, func: Func, r#type: HookType) {
+            pub unsafe fn InjectHookType<AT, Func>(
+                address: AT,
+                func: Func,
+                r#type: Memory::HookType,
+            ) {
                 unsafe {
-                    super::InjectHookType(
-                        DynBaseAddress(address),
-                        func,
-                        std::mem::transmute::<HookType, super::HookType>(r#type),
-                    );
+                    super::InjectHookType(DynBaseAddress(address), func, r#type);
                 }
             }
 
