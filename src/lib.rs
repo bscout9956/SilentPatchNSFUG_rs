@@ -16,7 +16,6 @@ mod win_types;
 
 use Patterns::txn;
 
-use crate::FixedDriftScore::GetTotalLapScore_Hook;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn OnInitializeHook() {
