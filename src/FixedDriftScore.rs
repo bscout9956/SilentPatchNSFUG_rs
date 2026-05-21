@@ -21,7 +21,7 @@ impl RacingCar {
         };
     }
 
-    pub fn GetTotalLapScore(&self) -> f32 {
+    pub extern "thiscall" fn GetTotalLapScore(&self) -> f32 {
         let mut total_score = 0.0;
 
         for lap_score in self.m_lapScores {
