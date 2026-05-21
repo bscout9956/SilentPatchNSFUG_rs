@@ -36,7 +36,7 @@ pub mod Memory {
         }
     }
 
-    pub unsafe fn Patch_Address_Value<AT, T>(address: AT, value: T) {
+    pub unsafe fn PatchAddressValue<AT, T>(address: AT, value: T) {
         const {
             assert!(
                 std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
@@ -50,7 +50,7 @@ pub mod Memory {
         }
     }
 
-    pub unsafe fn Patch_Address_List<AT>(address: AT, list: &[u8]) {
+    pub unsafe fn PatchAddressList<AT>(address: AT, list: &[u8]) {
         const {
             assert!(
                 std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
@@ -146,7 +146,7 @@ pub mod Memory {
             #[cfg(target_pointer_width = "64")]
             WriteOffsetValue(address, var, bytesAfterDisplacement);
             #[cfg(target_pointer_width = "32")]
-            Patch_Address_Value(address, var);
+            PatchAddressValue(address, var);
         }
     }
 
@@ -254,13 +254,13 @@ pub mod Memory {
 
         pub unsafe fn Patch_Address_Value<T, AT>(address: AT, value: T) {
             unsafe {
-                super::Patch_Address_Value(DynBaseAddress(address), value);
+                super::PatchAddressValue(DynBaseAddress(address), value);
             }
         }
 
         pub unsafe fn Patch_Address_List<AT>(address: AT, list: &[u8]) {
             unsafe {
-                super::Patch_Address_List(DynBaseAddress(address), list);
+                super::PatchAddressList(DynBaseAddress(address), list);
             }
         }
 
@@ -394,7 +394,7 @@ pub mod Memory {
                     PAGE_EXECUTE_READWRITE,
                     &mut dwProtect,
                 );
-                super::Patch_Address_Value(DynBaseAddress(address), value);
+                super::PatchAddressValue(DynBaseAddress(address), value);
                 VirtualProtect(
                     addr as *mut c_void,
                     size_of::<T>(),
@@ -414,7 +414,7 @@ pub mod Memory {
                     PAGE_EXECUTE_READWRITE,
                     &mut dwProtect,
                 );
-                super::Patch_Address_List(DynBaseAddress(address), list);
+                super::PatchAddressList(DynBaseAddress(address), list);
                 VirtualProtect(addr as *mut c_void, list.len(), dwProtect, &mut dwProtect);
             }
         }
