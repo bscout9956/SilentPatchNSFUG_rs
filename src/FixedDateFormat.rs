@@ -12,7 +12,7 @@ static mut CurrentLanguage: *mut i32 = std::ptr::null_mut();
 // Used some LLM assistance.
 #[unsafe(no_mangle)]
 pub extern "C" fn GetAbbrMonthForLanguage(month: WORD, language: i32) -> *const c_char {
-    if (1..12).contains(&language) {
+    if (1..=12).contains(&month) {
         let months: &[&'static CStr; 12] = match language {
             1 => &[
                 c"Jan", c"Fev", c"Mar", c"Avr", c"Mai", c"Jun", c"Jul", c"Aou", c"Sep", c"Oct",
