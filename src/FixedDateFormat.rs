@@ -64,8 +64,7 @@ pub unsafe extern "system" fn GetDateFormatA_NullTerminated(
 
     if !lpDateStr.is_null() && cchDate > 0 {
         unsafe {
-            // This line written by an LLM.
-            let last_character: *mut u8 = lpDateStr.offset((cchDate - 1) as isize);
+            let last_character: *mut u8 = lpDateStr.add((cchDate - 1) as usize);
             *last_character = 0;
         }
     }
