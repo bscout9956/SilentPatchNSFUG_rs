@@ -17,7 +17,7 @@ pub mod Memory {
     pub unsafe fn DynBaseAddress<AT>(address: AT) -> AT {
         const {
             assert!(
-                std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
+                size_of::<AT>() == size_of::<usize>(),
                 "AT must be pointer sized"
             );
         }
@@ -39,7 +39,7 @@ pub mod Memory {
     pub unsafe fn PatchAddressValue<AT, T>(address: AT, value: T) {
         const {
             assert!(
-                std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
+                size_of::<AT>() == size_of::<usize>(),
                 "AT must be pointed sized"
             );
         }
@@ -53,7 +53,7 @@ pub mod Memory {
     pub unsafe fn PatchAddressList<AT>(address: AT, list: &[u8]) {
         const {
             assert!(
-                std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
+                size_of::<AT>() == size_of::<usize>(),
                 "AT must be pointer sized"
             );
         }
@@ -67,7 +67,7 @@ pub mod Memory {
     pub unsafe fn Read<Var, AT>(address: AT, var: &mut Var) {
         const {
             assert!(
-                std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
+                size_of::<AT>() == size_of::<usize>(),
                 "AT must be pointer sized"
             );
         }
@@ -81,7 +81,7 @@ pub mod Memory {
     pub unsafe fn Nop<AT>(address: AT, count: usize) {
         const {
             assert!(
-                std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
+                size_of::<AT>() == size_of::<usize>(),
                 "AT must be pointer sized"
             );
         }
@@ -94,7 +94,7 @@ pub mod Memory {
     pub unsafe fn WriteOffsetValue<Var, AT>(address: AT, var: &Var, bytesAfterDisplacement: isize) {
         const {
             assert!(
-                std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
+                size_of::<AT>() == size_of::<usize>(),
                 "AT must be pointer sized"
             );
         }
@@ -117,7 +117,7 @@ pub mod Memory {
     ) {
         const {
             assert!(
-                std::mem::size_of::<AT>() == std::mem::size_of::<usize>(),
+                size_of::<AT>() == size_of::<usize>(),
                 "AT must be pointer sized"
             );
         }
@@ -233,7 +233,7 @@ pub mod Memory {
 
     pub unsafe fn Verify<AT>(address: AT, expected: usize) -> AT {
         const {
-            assert!(std::mem::size_of::<AT>() == std::mem::size_of::<usize>());
+            assert!(size_of::<AT>() == size_of::<usize>());
         }
         unsafe {
             let addr: usize = std::mem::transmute_copy(&address);
