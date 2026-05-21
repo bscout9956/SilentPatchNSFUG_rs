@@ -51,7 +51,7 @@ pub extern "C" fn GetAbbrMonthForLanguage(month: WORD, language: i32) -> *const 
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn GetDateFormatA_NullTerminated(
+pub unsafe extern "system" fn GetDateFormatA_NullTerminated(
     Locale: LCID,
     dwFlag: DWORD,
     lpDate: *const SYSTEMTIME,
