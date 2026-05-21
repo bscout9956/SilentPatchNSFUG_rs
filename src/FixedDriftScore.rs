@@ -1,4 +1,4 @@
-use std::{arch::naked_asm, mem};
+use std::arch::naked_asm;
 
 use crate::{NAKED_FUNC_EPILOG, NAKED_FUNC_PROLOG};
 
@@ -13,12 +13,7 @@ struct RacingCar {
 impl RacingCar {
     // We only define this, this isn't meant to be called. It's a compile time check.
     fn _assert_size() {
-        const {
-            assert!(
-                mem::size_of::<RacingCar>() == 0x140,
-                "Wrong size: RacingCar"
-            )
-        };
+        const { assert!(size_of::<RacingCar>() == 0x140, "Wrong size: RacingCar") };
     }
 
     pub extern "thiscall" fn GetTotalLapScore(&self) -> f32 {
