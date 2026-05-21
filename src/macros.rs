@@ -68,3 +68,10 @@ macro_rules! var_jmp {
         );
     };
 }
+
+#[macro_export]
+macro_rules! mut_ptr {
+    ($ext:expr) => {
+        &mut *std::ptr::addr_of_mut!($ext)
+    };
+}
