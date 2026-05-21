@@ -139,7 +139,7 @@ pub mod Memory {
 
     pub unsafe fn WriteMemDisplacement<Var, AT>(
         address: AT,
-        var: Var,
+        var: &Var,
         bytesAfterDisplacement: isize,
     ) {
         unsafe {
@@ -172,7 +172,7 @@ pub mod Memory {
         unsafe {
             ReadMemDisplacement(address, orig, bytesAfterDisplacement);
             let target_ptr = var as *const Var;
-            WriteMemDisplacement(address, target_ptr, bytesAfterDisplacement);
+            WriteMemDisplacement(address, &target_ptr, bytesAfterDisplacement);
         }
     }
 
