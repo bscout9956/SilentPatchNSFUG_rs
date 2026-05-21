@@ -134,7 +134,7 @@ pub extern "system" fn GetDateFormatA_GameLanguageFormat(
                 // All latin languages
                 let date_deref: SYSTEMTIME = *mutable_lpDate;
                 let month: *const i8 = GetAbbrMonthForLanguage(date_deref.wMonth, language);
-                
+
                 let month_str = if !month.is_null() {
                     c_str::CStr::from_ptr(month).to_str().unwrap_or("???")
                 } else {
