@@ -21,7 +21,7 @@ use windows_sys::Win32::System::SystemServices::{
 };
 use windows_sys::core::BOOL;
 
-unsafe extern "C" {
+unsafe extern "system" {
     pub fn OnInitializeHook();
 }
 static HOOK_FLAG: Once = Once::new();
