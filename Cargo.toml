@@ -17,6 +17,7 @@ windows-sys = { version = "0.61.2", features = [
     "Win32_Foundation",
     "Win32_System_Memory",
     "Win32_Globalization",
+    "Win32_System_Console",
     "Win32_System_Diagnostics_Debug",
     "Win32_System_Environment",
     "Win32_System_LibraryLoader",
@@ -24,17 +25,28 @@ windows-sys = { version = "0.61.2", features = [
     "Win32_System_SystemServices",
     "Win32_System_WindowsProgramming",
     "Win32_UI_WindowsAndMessaging",
-    "Win32_System_Console",
 ] }
 
 [lib]
 crate-type = ["cdylib"]
 
 [features]
-default = ["patterns_use_hints", "patterns_can_serialize_hints", "hooked_module", "hooked_function", "hooked_library"]
+default = [
+    "patterns_use_hints",
+    "patterns_can_serialize_hints",
+    #"hooked_module",
+    "hooked_function",
+    "hooked_library",
+]
 patterns_use_hints = []
 patterns_can_serialize_hints = []
 memory_decls_only = []
 hooked_module = []
 hooked_function = []
 hooked_library = []
+
+[package.metadata.hook]
+module_name = "target.exe"
+library_name = "kernel32.dll"
+function_name = "GetCommandLineA"
+function_signature = "fn() -> *mut c_void"
