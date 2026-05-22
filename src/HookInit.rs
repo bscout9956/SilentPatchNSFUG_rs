@@ -182,8 +182,6 @@ pub unsafe fn PatchIAT() -> bool {
                         let c_str_2 = CStr::from_ptr(name_ptr);
 
                         if let Ok(import_name) = c_str_2.to_str() {
-                            const FUNCTION_NAME: &str = concat!(env!("function_name"), "\0");
-
                             if import_name.eq(FUNCTION_NAME) {
                                 let pAddress =
                                     (instance + (*pImport).FirstThunk as usize) as *mut *mut c_void;
