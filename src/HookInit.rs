@@ -265,3 +265,10 @@ pub unsafe fn PatchIAT_ByPointers() -> bool {
 
     true
 }
+
+pub unsafe fn InstallHooks() {
+    let getStartupInfoHooked: bool = PatchIAT();
+    if !getStartupInfoHooked {
+        PatchIAT_ByPointers();
+    }
+}
