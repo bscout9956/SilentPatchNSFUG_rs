@@ -77,10 +77,14 @@ macro_rules! define_winapi_hook {
     };
 }
 
-define_winapi_hook!(
-    wrapped_function,
-    fn(module: *mut GetCommandLineA) -> *mut c_void
-);
+// WARNING: You can use the macro the old way, but that makes it
+// so that you can't easily configure the function and the return type.
+// Personally I think both solutions stink, but Rust isn't CPP and this
+// is a port job by someone who has barely an idea of what they're doing.
+// Nor do they understand CPP exactly...
+
+// define_winapi_hook!(wrapped_function, fn() -> *mut c_void);
+include!(concat!(env!("OUT_DIR"), "/generated_hook.rs"));
 
 pub unsafe fn ReplaceFunction(funcPtr: *mut *mut c_void) {
     let mut dwProtect: DWORD = 0;
