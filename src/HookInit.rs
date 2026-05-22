@@ -272,3 +272,16 @@ pub unsafe fn InstallHooks() {
         PatchIAT_ByPointers();
     }
 }
+
+// #[cfg(feature = "skip_initializeasi")]
+#[unsafe(no_mangle)]
+pub unsafe extern "system" fn DLLMain(
+    _hinst: HINSTANCE,
+    reason: DWORD,
+    _reserved: *const c_void,
+) -> BOOL {
+    if (reason == DLL_PROCESS_ATTACH) {
+        InstallHooks();
+    }
+    1
+}
