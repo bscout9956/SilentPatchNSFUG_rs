@@ -43,6 +43,7 @@ macro_rules! define_winapi_hook {
         pub mod $mod_name {
             use super::*;
             use std::sync::atomic::{AtomicPtr, Ordering};
+            use std::ffi::c_void;
 
             pub type FuncType = unsafe extern "system" fn($($arg_type),*) -> $ret_type;
 
@@ -61,16 +62,15 @@ macro_rules! define_winapi_hook {
 
             pub unsafe extern "system" fn overwriting_hook($($arg_name: $arg_type),*) -> $ret_type {
                 let orig_ptr = ORIG_FUNCTION.load(Ordering::Relaxed);
-
-                unsafe {MemoryVPPatch(orig_ptr, &ORIG_CODE)};
-
+                let code_copy = unsafe { std::ptr::read_unaligned(std::ptr::addr_of!(ORIG_CODE)) };
+                unsafe { MemoryVPPatch(orig_ptr, &code_copy)};
                 unsafe { hook($($arg_name),*) }
             }
 
             pub fn setup(orig_fn: FuncType, original_bytes: [u8; 5]) {
                 ORIG_FUNCTION.store(orig_fn as *mut c_void, Ordering::Relaxed);
                 unsafe {
-                    ORIG_CODE = original_bytes;
+                    std::ptr::write_unaligned(std::ptr::addr_of_mut!(ORIG_CODE), original_bytes);
                 }
             }
         }
