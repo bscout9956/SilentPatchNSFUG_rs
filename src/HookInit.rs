@@ -1,15 +1,18 @@
 // TODO: 64 BIT REQUIRES TRAMPOLINE WHICH WILL BE PORTED AT A LATER DATE
 // I AM FOCUSING ON THE 32 BIT IMPLEMENTATION AS IT DOESN'T REQUIRE PORTING MORE CODE THAN NECESSARY FOR NFSUGSP
 #![allow(unused)]
+
 use crate::MemoryMgr::Memory;
+use crate::MemoryMgr::Memory::HookType;
 use crate::win_types::{DWORD, DWORD_PTR, IMAGE_NT_HEADER, IMAGE_THUNK_DATA};
 use Memory::VP;
+use std::cmp::Ordering;
 use std::ffi::{CStr, c_char, c_void};
 use std::sync::Once;
+use std::sync::atomic::Ordering::Relaxed;
 use windows_sys::Win32::System::Diagnostics::Debug::{
     IMAGE_DATA_DIRECTORY, IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR, IMAGE_DIRECTORY_ENTRY_IMPORT,
 };
-use windows_sys::Win32::System::Environment::GetCommandLineA;
 use windows_sys::Win32::System::LibraryLoader::{GetModuleHandleA, GetProcAddress};
 use windows_sys::Win32::System::Memory::{PAGE_READWRITE, VirtualProtect};
 use windows_sys::Win32::System::SystemServices::{
@@ -223,4 +226,42 @@ pub unsafe fn PatchIAT() -> bool {
         pImport = unsafe { pImport.add(1) };
     }
     false
+}
+
+pub unsafe fn PatchIAT_ByPointers() -> bool {
+    use Memory::VP;
+
+    const LIBRARY_NAME_C: &str = concat!(env!("library_name"), "\0");
+    const FUNCTION_NAME_C: &str = concat!(env!("function_name"), "\0");
+
+    let tgt_module = GetModuleHandleA(LIBRARY_NAME_C.as_ptr());
+    if tgt_module.is_null() {
+        return false;
+    }
+
+    let tgt_func_ptr = GetProcAddress(tgt_module, FUNCTION_NAME_C.as_ptr());
+    let hooked_func = match tgt_func_ptr {
+        Some(f) => f as *mut c_void,
+        None => return false,
+    };
+
+    wrapped_function::ORIG_FUNCTION.store(hooked_func, Relaxed);
+
+    let mut original_bytes = [0u8; 5];
+    std::ptr::copy_nonoverlapping(hooked_func as *const u8, original_bytes.as_mut_ptr(), 5);
+    std::ptr::write_unaligned(
+        std::ptr::addr_of_mut!(wrapped_function::ORIG_CODE),
+        original_bytes,
+    );
+
+    #[cfg(target_pointer_width = "64")]
+    todo!();
+    #[cfg(target_pointer_width = "32")]
+    VP::InjectHookType(
+        hooked_func,
+        wrapped_function::overwriting_hook,
+        HookType::Jump,
+    );
+
+    true
 }
