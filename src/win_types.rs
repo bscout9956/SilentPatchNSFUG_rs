@@ -20,6 +20,7 @@ pub type LCID = DWORD;
 pub type LPVOID = *const c_void;
 pub type SIZE_T = usize;
 pub type LPCVOID = *const c_void;
+pub type LONG = i32;
 
 // 32 bits specific
 #[cfg(target_arch = "x86")]
