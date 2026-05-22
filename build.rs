@@ -33,6 +33,12 @@ fn main() {
     if let Some(function_name) = get_manifest_var(&manifest_content, "function_name") {
         println!("cargo:rustc-env=function_name={}", function_name);
     }
+    if let Some(revision_id) = get_manifest_var(&manifest_content, "revision_id") {
+        println!("cargo:rustc-env=revision_id={}", revision_id);
+    }
+    if let Some(build_id) = get_manifest_var(&manifest_content, "build_id") {
+        println!("cargo:rustc-env=build_id={}", build_id);
+    }
 
     // Read the signature from the environment
     let signature = get_manifest_var(&manifest_content, "function_signature")
