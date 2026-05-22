@@ -37,7 +37,6 @@ pub trait WinApiHookHelper {
 
 pub unsafe fn MemoryVPPatch(dest: *mut c_void, bytes: &[u8; 5]) {
     VP::Patch_Address_List(dest, bytes);
-    std::ptr::copy_nonoverlapping(bytes.as_ptr(), dest as *mut u8, 5);
 }
 
 macro_rules! define_winapi_hook {
