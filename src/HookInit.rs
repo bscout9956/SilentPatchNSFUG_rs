@@ -199,10 +199,10 @@ pub unsafe fn PatchIAT() -> bool {
                     return false;
                 }
                 let tgt_func_ptr = GetProcAddress(tgt_module, FUNCTION_NAME_C.as_ptr());
-                if tgt_func_ptr.is_none() {
-                    return false;
-                }
-                let tgt_func = tgt_func_ptr.unwrap() as *mut c_void;
+                let tgt_func = match tgt_func_ptr {
+                    Some(f) => f as *mut c_void,
+                    None => return false,
+                };
 
                 let mut pFunctions =
                     (instance + (*pImport).FirstThunk as usize) as *mut *mut c_void;
