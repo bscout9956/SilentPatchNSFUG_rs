@@ -1,2 +1,8 @@
 [build]
 target = "i686-pc-windows-msvc"
+
+# If you need these defined you'll have to pass the hooked feature onto the default list!
+[env]
+library_name = "KERNEL32.DLL"
+function_name = "GetCommandLineA"
+module_name = "ModuleName" # Originally commented out

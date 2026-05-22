@@ -31,7 +31,7 @@ windows-sys = { version = "0.61.2", features = [
 crate-type = ["cdylib"]
 
 [features]
-default = ["patterns_use_hints", "patterns_can_serialize_hints"]
+default = ["patterns_use_hints", "patterns_can_serialize_hints", "hooked_module", "hooked_function", "hooked_library"]
 patterns_use_hints = []
 patterns_can_serialize_hints = []
 memory_decls_only = []
