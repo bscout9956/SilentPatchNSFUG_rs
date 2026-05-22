@@ -1,23 +1,25 @@
 // TODO: 64 BIT REQUIRES TRAMPOLINE WHICH WILL BE PORTED AT A LATER DATE
 // I AM FOCUSING ON THE 32 BIT IMPLEMENTATION AS IT DOESN'T REQUIRE PORTING MORE CODE THAN NECESSARY FOR NFSUGSP
 #![allow(unused)]
-
 use crate::MemoryMgr::Memory;
 use crate::MemoryMgr::Memory::HookType;
-use crate::win_types::{DWORD, DWORD_PTR, IMAGE_NT_HEADER, IMAGE_THUNK_DATA};
+use crate::win_types::{DWORD, DWORD_PTR, IMAGE_NT_HEADER, IMAGE_THUNK_DATA, LONG};
 use Memory::VP;
 use std::cmp::Ordering;
 use std::ffi::{CStr, c_char, c_void};
 use std::sync::Once;
-use std::sync::atomic::Ordering::Relaxed;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering::{Relaxed, SeqCst};
+use windows_sys::Win32::Foundation::HINSTANCE;
 use windows_sys::Win32::System::Diagnostics::Debug::{
     IMAGE_DATA_DIRECTORY, IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR, IMAGE_DIRECTORY_ENTRY_IMPORT,
 };
 use windows_sys::Win32::System::LibraryLoader::{GetModuleHandleA, GetProcAddress};
 use windows_sys::Win32::System::Memory::{PAGE_READWRITE, VirtualProtect};
 use windows_sys::Win32::System::SystemServices::{
-    IMAGE_DOS_HEADER, IMAGE_IMPORT_BY_NAME, IMAGE_IMPORT_DESCRIPTOR,
+    DLL_PROCESS_ATTACH, IMAGE_DOS_HEADER, IMAGE_IMPORT_BY_NAME, IMAGE_IMPORT_DESCRIPTOR,
 };
+use windows_sys::core::BOOL;
 
 unsafe extern "C" {
     pub fn OnInitializeHook();
