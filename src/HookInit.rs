@@ -284,3 +284,23 @@ pub unsafe extern "system" fn DLLMain(
     }
     1
 }
+const RSC_REVISION_ID: &str = env!("revision_id");
+const RSC_BUILD_ID: &str = env!("build_id");
+
+static IS_INITIALIZED: AtomicBool = AtomicBool::new(false);
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn InitializeASI() {
+    if IS_INITIALIZED.swap(true, SeqCst) {
+        return;
+    }
+
+    InstallHooks();
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn GetBuildNumber() -> u32 {
+    let revision_int = RSC_REVISION_ID.parse::<u32>().unwrap();
+    let build_int = RSC_BUILD_ID.parse::<u32>().unwrap();
+    (revision_int << 8) | build_int
+}
