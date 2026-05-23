@@ -48,7 +48,6 @@ pub mod hook {
         }
 
         /// Offset was optional, pass 0 if necessary
-        /// TODO: Rework this?
         pub fn get<T>(&self, offset: isize) -> *mut T {
             unsafe { self.m_pointer.offset(offset) as *mut T }
         }
@@ -386,8 +385,7 @@ mod details {
             }
             #[cfg(not(feature = "patterns_use_hints"))]
             {
-                // TODO: Verify this
-                address = address as *const c_void;
+                let _ = address;
             }
 
             self.m_matches.len() == max_count
@@ -422,11 +420,11 @@ mod details {
             }
 
             let mut i: usize = executable.begin();
-            let end: usize = executable.end() - mask_size;
+            let end: usize = executable.end().saturating_sub(mask_size);
 
             while i <= end {
                 let ptr = i as *const u8;
-                let mut j: isize = (mask_size - 1) as isize;
+                let mut j: isize = mask_size as isize - 1;
 
                 unsafe {
                     while j >= 0 && pattern[j as usize] == (*ptr.add(j as usize) & mask[j as usize])
