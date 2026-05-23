@@ -126,8 +126,7 @@ pub mod Memory {
             let src_addr: isize = std::mem::transmute_copy(&address);
 
             let offset = std::ptr::read_unaligned(src_addr as *const i32) as isize;
-            let extra_bytes = bytesAfterDisplacement;
-            let dst_addr = src_addr + (4 + extra_bytes) + offset;
+            let dst_addr = src_addr + (4 + bytesAfterDisplacement) + offset;
 
             std::ptr::copy_nonoverlapping(
                 &dst_addr as *const isize as *const Var,
