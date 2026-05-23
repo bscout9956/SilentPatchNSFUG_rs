@@ -45,8 +45,8 @@ pub mod Memory {
         }
 
         unsafe {
-            let addr: usize = std::mem::transmute_copy(&address);
-            std::ptr::write_unaligned(addr as *mut T, value);
+            let addr: *mut T = std::mem::transmute_copy(&address);
+            std::ptr::write_unaligned(addr, value);
         }
     }
 
