@@ -32,8 +32,8 @@ crate-type = ["cdylib"]
 
 [features]
 default = [
-    "patterns_use_hints",
-    "patterns_can_serialize_hints",
+    # "patterns_use_hints",
+    # "patterns_can_serialize_hints",
     #"hooked_module",
     "hooked_function",
     "hooked_library",
