@@ -7,6 +7,8 @@
 use std::ffi::{c_float, c_void};
 use std::panic;
 use windows_sys::Win32::Foundation::HWND;
+#[cfg(feature = "debugprint")]
+use windows_sys::Win32::System::Console::AllocConsole;
 use windows_sys::Win32::UI::WindowsAndMessaging::{MB_OK, MessageBoxA, MessageBoxW};
 use windows_sys::Win32::{Foundation::HMODULE, System::LibraryLoader::GetModuleHandleA};
 
@@ -19,6 +21,7 @@ mod ScopedUnprotect;
 mod macros;
 mod win_types;
 
+use crate::FixedDateFormat::pGetDateFormatA_SilentPatch;
 use crate::FixedDriftScore::{
     CheckForMagazineTaskCompletion_BeatingPresetDriftScore_Hook,
     orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore,
