@@ -91,7 +91,7 @@ pub mod Memory {
         }
     }
 
-    pub unsafe fn WriteOffsetValue<Var, AT>(address: AT, var: Var, bytesAfterDisplacement: isize) {
+    pub unsafe fn WriteOffsetValue<Var, AT>(address: AT, var: &Var, bytesAfterDisplacement: isize) {
         const {
             assert!(
                 size_of::<AT>() == size_of::<usize>(),
@@ -100,11 +100,9 @@ pub mod Memory {
         }
         unsafe {
             let dst: isize = std::mem::transmute_copy(&address);
-            let src: isize = std::mem::transmute_copy(&var);
+            let src: isize = std::mem::transmute_copy(var);
 
-            let offset = bytesAfterDisplacement;
-
-            let target = src - dst - (4 + offset);
+            let target = src - dst - (4 + bytesAfterDisplacement);
 
             std::ptr::write_unaligned(dst as *mut i32, target as i32);
         }
