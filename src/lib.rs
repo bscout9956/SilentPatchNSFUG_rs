@@ -84,12 +84,11 @@ pub unsafe extern "system" fn OnInitializeHook() {
         }
     });
 
-    if let Err(_) = hook_result {
-        MessageBoxA(
-            0 as HWND,
-            c"Rust Mod CRASH!".as_ptr() as *const u8,
-            c"Mod Debug".as_ptr() as *const u8,
-            MB_OK,
-        );
+    if drift_score_hook_result.is_err() {
+        #[cfg(feature = "debugprint")]
+        {
+            println!("Panic detected, launching MSGB Box A");
+        }
     }
+
 }
