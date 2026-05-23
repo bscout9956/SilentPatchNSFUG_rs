@@ -39,7 +39,7 @@ pub unsafe extern "system" fn OnInitializeHook() {
                 MB_OK,
             );
             let hModule: HMODULE = GetModuleHandleA(std::ptr::null());
-            let Protect =
+            let _Protect =
                 ScopedUnprotect::unprotect_section_or_full_module(hModule, c".text".as_ptr());
 
             // Original comment:
