@@ -1,6 +1,5 @@
 // TODO: 64 BIT REQUIRES TRAMPOLINE WHICH WILL BE PORTED AT A LATER DATE
 // I AM FOCUSING ON THE 32 BIT IMPLEMENTATION AS IT DOESN'T REQUIRE PORTING MORE CODE THAN NECESSARY FOR NFSUGSP
-#![allow(unused)]
 use crate::MemoryMgr::Memory;
 use crate::MemoryMgr::Memory::HookType;
 use crate::win_types::{DWORD, DWORD_PTR, IMAGE_NT_HEADER, IMAGE_THUNK_DATA, LONG};
@@ -284,6 +283,14 @@ pub unsafe extern "system" fn DLLMain(
     }
     1
 }
+
+// unsafe extern "C" {
+//     // #[cfg(feature = "skip_initializeasi")]
+//     static InitCount: LONG;
+//     // has to be declspec(dllexport) but _cdecl????? dont get it
+
+// }
+
 const RSC_REVISION_ID: &str = env!("revision_id");
 const RSC_BUILD_ID: &str = env!("build_id");
 
