@@ -9,7 +9,7 @@ use std::panic;
 use windows_sys::Win32::Foundation::HWND;
 #[cfg(feature = "debugprint")]
 use windows_sys::Win32::System::Console::AllocConsole;
-use windows_sys::Win32::UI::WindowsAndMessaging::{MB_OK, MessageBoxA, MessageBoxW};
+use windows_sys::Win32::UI::WindowsAndMessaging::{MB_ICONERROR, MB_OK, MessageBoxA, MessageBoxW};
 use windows_sys::Win32::{Foundation::HMODULE, System::LibraryLoader::GetModuleHandleA};
 
 mod FixedDateFormat;
@@ -21,7 +21,9 @@ mod ScopedUnprotect;
 mod macros;
 mod win_types;
 
-use crate::FixedDateFormat::pGetDateFormatA_SilentPatch;
+use crate::FixedDateFormat::{
+    CurrentLanguage, GetDateFormatA_GameLanguageFormat, pGetDateFormatA_SilentPatch,
+};
 use crate::FixedDriftScore::{
     CheckForMagazineTaskCompletion_BeatingPresetDriftScore_Hook,
     orgCheckForMagazineTaskCompletion_BeatingPresetDriftScore,
@@ -74,7 +76,6 @@ pub unsafe extern "system" fn OnInitializeHook() {
                 stylePointsLoad.get(1).get::<c_void>(2),
             ];
 
-            // Typed as c_float, is it tho?
             let addHalfPtr: *mut c_float =
                 get_pattern(b"D8 05 ? ? ? ? E8 ? ? ? ? 5F 89 46 ? 8A 44 24", 2);
 
@@ -89,9 +90,37 @@ pub unsafe extern "system" fn OnInitializeHook() {
 
     if drift_score_hook_result.is_err() {
         #[cfg(feature = "debugprint")]
-        {
-            println!("Panic detected, launching MSGB Box A");
-        }
+        println!("Panic detected!");
+
+        MessageBoxA(
+            std::ptr::null_mut::<c_void>(),
+            "SilentPatch Error".as_ptr(),
+            "Failed to patch DriftScore Fix.".as_ptr(),
+            MB_OK | MB_ICONERROR,
+        );
     }
 
+    let date_format_hook_result = panic::catch_unwind(|| unsafe {
+        let fixedDateFormat: *mut i32 = get_pattern(b"FF 15 ? ? ? ? 33 C0 8B FF", 2);
+        Memory::PatchAddressValue(
+            std::ptr::addr_of!(pGetDateFormatA_SilentPatch),
+            fixedDateFormat,
+        );
+    });
+
+    if date_format_hook_result.is_err() {
+        #[cfg(feature = "debugprint")]
+        println!("Panic detected!");
+
+        // TODO
+        //pGetDateFormatA_SilentPatch = GetDateFormatA_GameLanguageFormat;
+        //CurrentLanguage = get_pattern::<i32>(b"89 3D ? ? ? ? 74 ? A1", 2);
+
+        MessageBoxA(
+            std::ptr::null_mut::<c_void>(),
+            "SilentPatch Error".as_ptr(),
+            "Failed to patch DateFormat Fix.".as_ptr(),
+            MB_OK | MB_ICONERROR,
+        );
+    }
 }
