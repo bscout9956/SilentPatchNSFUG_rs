@@ -29,15 +29,12 @@ use Patterns::txn;
 
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn OnInitializeHook() {
-    let hook_result = panic::catch_unwind(|| {
+    let drift_score_hook_result = panic::catch_unwind(|| {
         unsafe {
-            // For testing purposes lmao
-            MessageBoxA(
-                0 as HWND,
-                c"Rust Mod Successfully Launched".as_ptr() as *const u8,
-                c"Mod Debug".as_ptr() as *const u8,
-                MB_OK,
-            );
+            #[cfg(feature = "debugprint")]
+            {
+                AllocConsole();
+            }
             let hModule: HMODULE = GetModuleHandleA(std::ptr::null());
             let _Protect =
                 ScopedUnprotect::unprotect_section_or_full_module(hModule, c".text".as_ptr());
