@@ -1,6 +1,6 @@
-# SilentPatch for Need for Speed: Underground - Rust Fork 
+# SilentPatch for Need for Speed: Underground - Rust Port
 
-This repository is a fork of Silent's SilentPatch for Need for Speed: Underground written in Rust.
+This repository is a "fork" (more of a port but whatever) of Silent's SilentPatch for Need for Speed: Underground written in Rust.
 This was done as a PoC and a test to see how far I could go porting something from another "systems" language into Rust.
 
 Initially I planned to do this project as much by hand as I possibly could.
