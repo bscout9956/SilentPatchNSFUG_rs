@@ -10,7 +10,7 @@ pub static mut CurrentLanguage: *mut i32 = std::ptr::null_mut();
 
 // Used some LLM assistance.
 #[unsafe(no_mangle)]
-pub extern "C" fn GetAbbrMonthForLanguage(month: WORD, language: i32) -> *const c_char {
+pub extern "system" fn GetAbbrMonthForLanguage(month: WORD, language: i32) -> *const c_char {
     if (1..=12).contains(&month) {
         let months: &[&'static CStr; 12] = match language {
             1 => &[
@@ -182,11 +182,11 @@ pub unsafe extern "system" fn GetDateFormatA_Fallback(
     }
 }
 
-pub static mut pGetDateFormatA_SilentPatch: unsafe extern "system" fn(
-    LCID,
-    DWORD,
+pub static pGetDateFormatA_SilentPatch: unsafe extern "system" fn(
+    u32,
+    u32,
     *const SYSTEMTIME,
-    PCSTR,
-    PSTR,
+    *const u8,
+    *mut u8,
     i32,
 ) -> i32 = GetDateFormatA_Fallback;
