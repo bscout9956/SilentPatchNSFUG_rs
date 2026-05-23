@@ -44,6 +44,7 @@ memory_decls_only = []
 hooked_module = []
 hooked_function = []
 hooked_library = []
+debugprint = []
 
 [package.metadata.hook]
 module_name = "target.exe"
