@@ -2,6 +2,7 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
+#![allow(unused)]
 
 use std::ffi::{c_float, c_void};
 use std::panic;
@@ -42,8 +43,7 @@ pub unsafe extern "system" fn OnInitializeHook() {
             // Original comment:
             // Fix the drift score magazine taking a best lap score and dividing it by laps.
             // Also fix the high score in the menu displaying style points instead of the full score.
-
-            let getBestLapScore = txn::Pattern::new(b"E8 ? ? ? ? E8 ? ? ? ? 89 86").get_one();
+            let getBestLapScore = TxnPattern::new(b"E8 ? ? ? ? E8 ? ? ? ? 89 86").get_one();
             let beatingPresetDriftScore: *mut c_void =
                 txn::get_pattern(b"57 E8 ? ? ? ? 83 C4 08 E8", 1);
 
@@ -51,6 +51,7 @@ pub unsafe extern "system" fn OnInitializeHook() {
                 getBestLapScore.get::<c_void>(0),
                 GetTotalLapScore_Hook as *const (),
             ); // Always cast to *const (), needs fixing later
+
             Memory::Nop(getBestLapScore.get::<c_void>(5), 5);
             Memory::PatchAddressList(
                 getBestLapScore.get::<c_void>(10),
