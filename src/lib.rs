@@ -79,8 +79,8 @@ pub unsafe extern "system" fn OnInitializeHook() {
                 Memory::PatchAddressValue(addr, 0xC4);
             }
 
-            let fZero: c_float = 0.0f32;
-            Memory::PatchAddressValue(addHalfPtr, &fZero);
+            static fZero: c_float = 0.0f32;
+            Memory::PatchAddressValue(addHalfPtr, &fZero as *const f32);
         }
     });
 
