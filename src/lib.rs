@@ -26,7 +26,7 @@ use crate::FixedDriftScore::{
 use crate::Patterns::txn::get_pattern;
 use FixedDriftScore::GetTotalLapScore_Hook;
 use MemoryMgr::Memory;
-use Patterns::txn;
+use Patterns::{TxnPattern, txn};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "system" fn OnInitializeHook() {
@@ -64,7 +64,7 @@ pub unsafe extern "system" fn OnInitializeHook() {
                 CheckForMagazineTaskCompletion_BeatingPresetDriftScore_Hook as *const (),
             );
 
-            let mut stylePointsLoad = txn::Pattern::new(b"D9 85 BC 00 00 00").count(2);
+            let mut stylePointsLoad = TxnPattern::new(b"D9 85 BC 00 00 00").count(2);
             let stylePointsOffset = [
                 get_pattern(b"D8 9D BC 00 00 00", 2),
                 stylePointsLoad.get(0).get::<c_void>(2),
