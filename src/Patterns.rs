@@ -209,6 +209,8 @@ pub mod txn {
     }
 }
 
+pub type TxnPattern = BasicPattern<ExceptionErrPolicy>;
+
 // Ends here
 mod details {
     use std::os::raw::c_void;
