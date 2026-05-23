@@ -180,13 +180,13 @@ pub unsafe fn PatchIAT() -> bool {
                         let name_ptr = &(*import_name_ptr).Name as *const i8;
                         let c_str_2 = CStr::from_ptr(name_ptr);
 
-                        if let Ok(import_name) = c_str_2.to_str() {
-                            if import_name.eq(FUNCTION_NAME) {
-                                let pAddress =
-                                    (instance + (*pImport).FirstThunk as usize) as *mut *mut c_void;
-                                ReplaceFunction(pAddress.add(thunk_idx));
-                                return true;
-                            }
+                        if let Ok(import_name) = c_str_2.to_str()
+                            && import_name.eq(FUNCTION_NAME)
+                        {
+                            let pAddress =
+                                (instance + (*pImport).FirstThunk as usize) as *mut *mut c_void;
+                            ReplaceFunction(pAddress.add(thunk_idx));
+                            return true;
                         }
 
                         pThunk = pThunk.add(1);
